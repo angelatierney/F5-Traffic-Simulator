@@ -1,0 +1,23 @@
+---
+# Validation Role - Pre-flight configuration check
+# Runs the Python validator before deploying load balancer config
+
+- name: Ensure config_file is defined for validation
+  fail:
+    msg: "config_file variable is required for validation (e.g. -e 'config_file=../configs/load_balancer.yaml')"
+  when: config_file is not defined
+
+- name: Run pre-flight configuration validator
+  command:
+    cmd: "python3 {{ playbook_dir }}/../scripts/preflight_validator.py {{ config_file }}"
+  register: validation_result
+  changed_when: false
+
+- name: Fail if validation reported errors
+  fail:
+    msg: "Pre-flight validation failed. Check the output above for errors."
+  when: validation_result.rc != 0
+
+- name: Validation passed
+  debug:
+    msg: "Configuration validation passed. Proceeding with deployment."

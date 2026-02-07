@@ -1,0 +1,4 @@
+---
+# Validation role defaults
+# Set to false to skip pre-flight validation (e.g. when config is validated elsewhere)
+validation_enabled: true
